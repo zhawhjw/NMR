@@ -79,9 +79,9 @@ __global__ void forward_face_index_map_cuda_kernel_1(
     // const int y_max = min(ceil(max(max(p[0][1], p[1][1]), p[2][1]) / block_size)+offset, is / block_size - 1.);
     // const int x_min = max(ceil(p[0][0])-offset, 0.);
     // const int x_max = min(p[2][0] +offset, is -1.);
-    const int x_min = max(ceil(min(min(p[0][0], p[1][0]), p[2][0]))-offset, 0.);
+    const int x_min = max(ceilf(min(min(p[0][0], p[1][0]), p[2][0]))-offset, 0.);
     const int x_max = min((max(max(p[0][0], p[1][0]), p[2][0]))+offset, is - 1.);
-    const int y_min = max(ceil(min(min(p[0][1], p[1][1]), p[2][1]))-offset, 0.);
+    const int y_min = max(ceilf(min(min(p[0][1], p[1][1]), p[2][1]))-offset, 0.);
     const int y_max = min((max(max(p[0][1], p[1][1]), p[2][1]))+offset, is - 1.);
     const int block_image_size = image_size / block_size;
     for (int x = x_min / block_size; x <= x_max/block_size; x++) {
@@ -355,16 +355,16 @@ __global__ void backward_pixel_map_cuda_kernel(
 
             /* along edge */
             int d0_from, d0_to;
-            d0_from = max(ceil(min(p[0][0], p[1][0])), 0.);
+            d0_from = max(ceilf(min(p[0][0], p[1][0])), 0.);
             d0_to = min(max(p[0][0], p[1][0]), is - 1.);
             for (int d0 = d0_from; d0 <= d0_to; d0++) {
                 /* get cross point */
                 int d1_in, d1_out;
                 const scalar_t d1_cross = (p[1][1] - p[0][1]) / (p[1][0] - p[0][0]) * (d0 - p[0][0]) + p[0][1];
                 if (0 < direction)
-                    d1_in = floor(d1_cross);
+                    d1_in = floorf(d1_cross);
                 else
-                    d1_in = ceil(d1_cross);
+                    d1_in = ceilf(d1_cross);
                 d1_out = d1_in + direction;
 
                 /* continue if cross point is not shown */
@@ -470,9 +470,9 @@ __global__ void backward_pixel_map_cuda_kernel(
                         d0_cross2 = (p[1][1] - p[2][1]) / (p[1][0] - p[2][0]) * (d0 - p[2][0]) + p[2][1];
                     }
                     if (0 < direction)
-                        d1_limit = ceil(d0_cross2);
+                        d1_limit = ceilf(d0_cross2);
                     else
-                        d1_limit = floor(d0_cross2);
+                        d1_limit = floorf(d0_cross2);
                     int d1_from = max(min(d1_in, d1_limit), 0);
                     int d1_to = min(max(d1_in, d1_limit), is - 1);
 
