@@ -99,8 +99,8 @@ __global__ void load_textures_cuda_kernel(
         }
     } else {
         /* nearest neighbor */
-        const int pos_xi = round(pos_x);
-        const int pos_yi = round(pos_y);
+        const int pos_xi = roundf(pos_x);
+        const int pos_yi = roundf(pos_y);
         for (int k = 0; k < 3; k++) {
             if (texture_wrapping != CLAMP_TO_BORDER) {
                 texture_[k] = image[pos_yi * image_width * 3 + pos_xi * 3 + k];
